@@ -96,13 +96,13 @@ data_inner_join_imp_filt <- data_inner_join_imp[,-nearZeroVar(data_inner_join_im
 <br/>
 
 ## Data Scaling
-*- check PRS columns : already scaled* <br/>
+**- check PRS columns : already scaled** <br/>
 names(data_inner_join_imp_filt)[4:10] <br/>
 <br/>
-*- check demographic columns : "sex", "race.ethnicity", "married", "abcd_site" should be factor* <br/>
+**- check demographic columns : "sex", "race.ethnicity", "married", "abcd_site" should be factor** <br/>
 names(data_inner_join_imp_filt)[4037:4044] <br/>
 <br/>
-*- Data scaling except factor columns* <br/>
+**- Data scaling except factor columns** <br/>
 for(i in 1:ncol(data_inner_join_imp_filt)){
   if(is.numeric(data_inner_join_imp_filt[,i]))
     if(i<4 || 10<i && i!=4038 && i!=4039 && i!=4042 && i!=4043){
@@ -112,9 +112,90 @@ for(i in 1:ncol(data_inner_join_imp_filt)){
 <br/>
 
 ## Dummy Coding
-*- Dummy code categorical variables* <br/>
+**- Dummy code categorical variables** <br/>
 data_inner_join_imp_filt <- dummy_cols(.data = data_inner_join_imp_filt,
            select_columns = c("sex.1", "race.ethnicity", "married", "abcd_site"),
            remove_first_dummy = FALSE
 ) <br/>
 <br/>
+
+# **Data Analysis**
+## Data Split
+set.seed(1) <br/>
+<br/>
+**- Split into train and test data** <br/>
+train.index <- createDataPartition(data_final$HCvsSI, p = .7, list = FALSE) <br/>
+train <- data_final[ train.index,] <br/>
+test  <- data_final[-train.index,] <br/>
+<br/>
+
+## Feature Selection
+y <- "HCvsSI" <br/>
+x <- setdiff(names(train), y) <br/>
+<br/>
+train[, y] <- as.factor(train[, y]) <br/>
+test[, y] <- as.factor(test[, y]) <br/>
+<br/>
+x_significant <- c()
+for (i in x){
+  form <- paste(y,'~',i)
+  fit <- glm(as.formula(form), family='binomial', data=train)
+  p_value <- coef(summary(fit))[,4][2]
+  if(p_value < 0.05){
+    x_significant <- append(x_significant, names(p_value))
+  }
+} <br/>
+<br/>
+**- add age as the necessary covariate** <br/>
+x_significant <- append('age', x_significant) <br/>
+<br/>
+**- extract the significant features from the train and test sets** <br/>
+train <- subset(train, select=c(y, x_significant)) <br/>
+test <- subset(test, select=c(y, x_significant)) <br/>
+<br/>
+
+## Auto ML
+h2o.init() <br/>
+<br/>
+**- create an index column for stratified cross-validation** <br/>
+fold_column <- rep(0, nrow(train)) <br/>
+train <- data.frame(fold_column, train) <br/>
+<br/>
+k_folds <- 5 <br/>
+set.seed(1) <br/>
+train$fold_column <- createFolds(train$HCvsSI, k=k_folds, list=FALSE) <br/>
+<br/>
+table(train$fold_column[which(train$HCvsSI == 0)]) <br/>
+table(train$fold_column[which(train$HCvsSI == 1)]) <br/>
+<br/>
+**- train the model** <br/>
+train_h2o <- as.h2o(train, use_datatable = TRUE) <br/>
+<br/>
+aml <- h2o.automl(x = x_significant, y = y,
+                  training_frame = train_h2o,
+                  max_models = 20,
+                  seed = 1,
+                  fold_column = 'fold_column') <br/>
+<br/>
+
+## Prediction
+test_h2o <- as.h2o(test, use_datatable = TRUE) <br/>
+<br/>
+pred <- h2o.predict(aml, test_h2o) # object directly <br/>
+head(as.data.frame(pred)) %>%
+  kbl() %>%
+  kable_styling(bootstrap_options=c('condensed','striped')) <br/>
+<br/>
+**- check the performance of the leader model** <br/>
+perf <- h2o.performance(aml@leader, test_h2o) <br/>
+perf <br/>
+<br/>
+
+## Explainability
+**- explain leader model & compare with all AutoML models** <br/>
+exp <- h2o.explain(aml, test_h2o) <br/>
+exp <br/>
+<br/>
+**- explain a single H2O model (e.g. leader model from AutoML)** <br/>
+exm <- h2o.explain(aml@leader, test_h2o) <br/>
+exm <br/>
