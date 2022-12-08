@@ -6,7 +6,7 @@ description: ML에 사용한 R codes 정리
 nav: true
 ---
 
-# Data Preprocessing
+# **Data Preprocessing**
 ## Install & Run Needed Packages
 install.packages('plyr') <br/>
 install.packages('dplyr') <br/>
@@ -41,9 +41,10 @@ abcd_brain_task <- read.csv('abcd_brain_task-fMRI_StopSignalTest.csv') <br/>
 abcd_demographics <- read.csv('abcd_demographics.csv') <br/>
 <br/>
 
-#### Remove observations with SI = 2 / Remove "HCvsSA" column
+#### Remove observations with SI = 2 / Remove "HCvsSA" column / Change "HCvsSI" column as factor
 abcd_SI <- subset(abcd_SI, abcd_SI$HCvsSI < 2) <br/>
 abcd_SI <- abcd_SI %>% select(-HCvsSA) <br/>
+abcd_SI$HCvsSI <- as.factor(abcd_SI$HCvsSI) <br/>
 <br/>
 
 #### Remove CBCL's column except t-score / Remove "eventname" column
@@ -65,7 +66,7 @@ abcd_demographics$subjectkey[1] <br/>
 #### Unify the subjectkey format
 abcd_brain_wm <- abcd_brain_wm %>%
   mutate(subjectkey = paste('NDAR','_', substr(subjectkey, 5, 15), sep = '')) <br/>
-abcd_SI_Removed <- abcd_SI_Removed %>%
+abcd_SI <- abcd_SI %>%
   mutate(subjectkey = paste('NDAR','_', substr(subjectkey, 5, 15), sep = '')) <br/>
 abcd_demographics <- abcd_demographics %>%
   mutate(subjectkey = paste('NDAR','_', substr(subjectkey, 5, 15), sep = '')) <br/>
@@ -92,4 +93,28 @@ filtered_col <- nearZeroVar(data_inner_join_imp, saveMetrics = TRUE) %>%
   rownames_to_column() %>%
   filter(nzv) <br/>
 data_inner_join_imp_filt <- data_inner_join_imp[,-nearZeroVar(data_inner_join_imp)] <br/>
+<br/>
+
+## Data Scaling
+*- check PRS columns : already scaled* <br/>
+names(data_inner_join_imp_filt)[4:10] <br/>
+<br/>
+*- check demographic columns : "sex", "race.ethnicity", "married", "abcd_site" should be factor* <br/>
+names(data_inner_join_imp_filt)[4037:4044] <br/>
+<br/>
+*- Data scaling except factor columns* <br/>
+for(i in 1:ncol(data_inner_join_imp_filt)){
+  if(is.numeric(data_inner_join_imp_filt[,i]))
+    if(i<4 || 10<i && i!=4038 && i!=4039 && i!=4042 && i!=4043){
+    data_inner_join_imp_filt[,i] <- scale(data_inner_join_imp_filt[,i])
+  }
+} <br/>
+<br/>
+
+## Dummy Coding
+*- Dummy code categorical variables* <br/>
+data_inner_join_imp_filt <- dummy_cols(.data = data_inner_join_imp_filt,
+           select_columns = c("sex.1", "race.ethnicity", "married", "abcd_site"),
+           remove_first_dummy = FALSE
+) <br/>
 <br/>
