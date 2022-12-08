@@ -7,7 +7,6 @@ nav: true
 ---
 
 # Data Preprocessing
-<br/>
 ## Install & Run Needed Packages
 install.packages('plyr') <br/>
 install.packages('dplyr') <br/>
@@ -42,18 +41,18 @@ abcd_brain_task <- read.csv('abcd_brain_task-fMRI_StopSignalTest.csv') <br/>
 abcd_demographics <- read.csv('abcd_demographics.csv') <br/>
 <br/>
 
-### Remove observations with SI = 2 / Remove "HCvsSA" column
+#### Remove observations with SI = 2 / Remove "HCvsSA" column
 abcd_SI <- subset(abcd_SI, abcd_SI$HCvsSI < 2) <br/>
 abcd_SI <- abcd_SI %>% select(-HCvsSA) <br/>
 <br/>
 
-### Remove CBCL's column except t-score / Remove "eventname" column
+#### Remove CBCL's column except t-score / Remove "eventname" column
 abcd_cbcl <- abcd_cbcl %>% select(-ends_with(c('r', 'm', 'nm'))) <br/>
 abcd_cbcl <- abcd_cbcl %>% select(-eventname) <br/>
 <br/>
 
 ## Data Merging
-### Check subjectkey format
+#### Check subjectkey format
 abcd_cbcl$subjectkey[1] <br/>
 abcd_brain_wm$subjectkey[1] <br/>
 abcd_SI$subjectkey[1] <br/>
@@ -63,14 +62,34 @@ abcd_brain_task$subjectkey[1] <br/>
 abcd_demographics$subjectkey[1] <br/>
 <br/>
 
-### Unify the subjectkey format
+#### Unify the subjectkey format
 abcd_brain_wm <- abcd_brain_wm %>%
   mutate(subjectkey = paste('NDAR','_', substr(subjectkey, 5, 15), sep = '')) <br/>
 abcd_SI_Removed <- abcd_SI_Removed %>%
   mutate(subjectkey = paste('NDAR','_', substr(subjectkey, 5, 15), sep = '')) <br/>
 abcd_demographics <- abcd_demographics %>%
   mutate(subjectkey = paste('NDAR','_', substr(subjectkey, 5, 15), sep = '')) <br/>
+<br/>
 
-### Merge Data
+#### Merge Data
 data_list <- list(abcd_SI, abcd_PRS, abcd_cbcl, abcd_brain_gm, abcd_brain_wm, abcd_brain_task, abcd_demographics) <br/>
 data_inner_join <- join_all(data_list, by = 'subjectkey', type = 'inner') <br/>
+<br/>
+
+## Missing Data
+#### Remove empty column
+data_inner_join <- subset(data_inner_join, select=-cbcl_scr_07_stress_nm_2) <br/>
+<br/>
+
+#### Median NA imputation for numeric variables
+data_inner_join_imp <- data_inner_join %>%
+  mutate_if(is.numeric, function(x) ifelse(is.na(x), median(x, na.rm = T), x)) <br/>
+<br/>
+
+## Data Filtering
+#### Filtering out zero or near-zero variance Features
+filtered_col <- nearZeroVar(data_inner_join_imp, saveMetrics = TRUE) %>%
+  rownames_to_column() %>%
+  filter(nzv) <br/>
+data_inner_join_imp_filt <- data_inner_join_imp[,-nearZeroVar(data_inner_join_imp)] <br/>
+<br/>
