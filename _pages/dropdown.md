@@ -1,12 +1,12 @@
 ---
 layout: page
-title: submenus changed
+title: supplementary data
 nav: true
 dropdown: true
 children:
-    - title: publications
-      permalink: /publications/
+    - title: codes
+      permalink: /codes/
     - title: divider
-    - title: projects
-      permalink: /projects/
+    - title: references
+      permalink: /references/
 ---
