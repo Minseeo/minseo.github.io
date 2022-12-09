@@ -8,6 +8,7 @@ nav: true
 
 # **Data Preprocessing**
 ## Install & Run Needed Packages
+{% highlight c++ linenos %}
 install.packages('plyr') <br/>
 install.packages('dplyr') <br/>
 install.packages('visdat') <br/>
@@ -29,6 +30,7 @@ library(tidyselect) <br/>
 library(fastDummies) <br/>
 library(h2o) <br/>
 library(kableExtra) <br/>
+{% endhighlight %}
 <br/>
 
 ## Import Data
