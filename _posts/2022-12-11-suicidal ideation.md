@@ -5,6 +5,7 @@ date: 2022-12-09 17:39:00
 description: 아동 청소년 자살률 0% 달성을 위한 치료 및 예방을 위한 계획
 comment : true
 ---
+
 # **대한민국 아동청소년 자살률 0% 달성을 위한 실현 가능한 계획**
 ## **Intro**
 대한민국 청소년 자살률은 OCED 국가 중에서도 상당히 높은 수준이다. 2016년 사망원인 통계에 따르면 청소년 사망자 중 약 30%가 극단적 선택으로 세상을 떠났다(이승호, 2018). 우리가 마주하는 자살은 ‘이미 발생한 결과’에 그치겠지만, 당사자가 경험하는 자살은 하나의 ‘과정’이다. Thompson과 동료들(2012)에 따르면, 자살은 “death wish – Ideation – Plan – Attempt” 네 단계를 따라 이루어진다. 우리의 목표는, 이 네 단계 중 하나에 해당하는 아동 청소년을 발견해내고, 그들이 자살에 이르기 전에 예방하는 것이다. 아동 청소년 자살 행동의 특성을 살펴보면, 10세부터 12세까지는 완만히 증가하지만 12세부터 20세까지는 급격히 증가한다(Voss et al., 2019). 즉, 12세부터 20세 사이에 급증하는 자살률에 브레이크를 달아줄 필요가 있을 것으로 보인다. 따라서 우리는, 12세부터 20세(중학교 1학년 ~ 고등학교 3학년)에 해당하는 아동 청소년들 중 자살 과정상에 놓인 아이들을 탐지해내고, 그에 해당하는 치료를 제공할 것을 제안한다. <br/>
@@ -79,7 +80,7 @@ test  <- data_final[-train.index,]
 ```
 전처리를 완료한 데이터(n = 1768)는 data split 과정을 통해 train set과 test set으로 나누었다. 이때, test 또는 train set에 특정 데이터가 쏠리는 것을 방지하기 위해, 자살 사고가 있는 사람과 없는 사람의 비율을 train set과 test set에 동일하게 배분하였다(p = .7). 이때 train & test set으로 나누는 것은, test set을 대상으로 머신 러닝을 수행하고 이때 도출된 모델을 기반으로 test set에 적용해보기 위함이다. 모델을 도출해낼 때 사용되지 않은 데이터에 대해 모델을 적용하고 예측해봄으로써 “일반화(generalization)”할 수 있게 된다. <br/>
 
-<img src="/assets/img/8.png" width="90%" height="90%" title="제목" alt="아무거나"/>
+<img src="/assets/img/ML.png" width="90%" height="90%"/>
 
 #### **Feature Selection**
 ```
@@ -101,13 +102,15 @@ for (i in x){
 ```
 다음으로, 자살 사고를 유의미하게 예측할 수 있는 변인을 추려내기 위해 feature selection을 수행하였다. 유의미하게 나온 변인들을 종합하면 다음과 같다. <br/>
 
-<img src="assets/img/significant.png">
+<center>
+<img src="assets/img/significant.png" width="300"/>
+</center>
 
 #### **Auto ML**
 유의미한 변인들을 기반으로, train set에 대해 본격적인 머신 러닝을 수행하였다. 이때, 5-fold 기법을 활용하여 cross-validation이 이루어졌다. 머신 러닝에는 R의 `h2o package`가 활용되었다. <br/>
 fMRI, sMRI, dMRI, PRS, CBCL, sociodemographic variable을 모두 포함했을 때, leader model인 GBM에서 자살 사고를 예측하는 변수들의 상대적 중요도는 다음과 같다. <br/>
 
-<img src="/assets/img/shap.jpg">
+<img src="/assets/img/shap.png" width="300"/>
 
 결과적으로 유의미한 변인을 정리하면 다음과 같다. White matter 주요 변인을 살펴보면, emotion과 관련된 뇌 영역(ex. amygdala, ACC...)이나 보상 체계와 관련된 뇌 영역(ex. insula...) 등의 연결성이 자살 사고를 유의미하게 예측함을 알 수 있다. 특히, amygdala의 높은 연결성이 자살 사고를 유의미하게 예측하는 것은, 자살 사고를 하는 아동 청소년들이 감정 변화에 더욱 민감하기 때문일 수 있음을 시사한다. <br/>
 주요 변인 상위 항목 중 가장 많은 비중을 차지하는 것은 CBCL이며, 이는 자기보고 데이터가 자살 사고를 예측하는 데 상당히 유의미하다는 것을 의미한다. 이에 따라, CBCL 변인을 단독으로 활용했을 때 자살 사고 예측력을 확인해보았다. 지금까지 수행한 것과 동일한 과정을 통해 CBCL 단독 예측력을 확인한 결과, AUC가 0.96으로 상당히 높음을 확인하였다. 이는, PRS(AUC = 0.59), sociodemographic(AUC = 0.64), fMRI(AUC = 0.55), sMRI(AUC = 0.55), dMRI(AUC = 0.73) 각각의 단독 예측에 비해 유의미하게 높은 수치이다. <br/>
@@ -130,6 +133,8 @@ fMRI, sMRI, dMRI, PRS, CBCL, sociodemographic variable을 모두 포함했을 �
 <br/>
 #### **치료 및 예방을 위해 필요한 예산**
 지금까지 제시한 치료와 예방 방안을 실현하기 위해 필요한 예산은 다음과 같다.
-
-git commit --allow-empty -m "Trigger rebuild"
-git push
+##### **치료 예산**
+<img src="/assets/img/treatment.png" width="300"/>
+<br/>
+##### **예방 예산**
+<img src="/assets/img/prevent.png" width="300"/>
