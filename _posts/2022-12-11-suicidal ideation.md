@@ -130,3 +130,6 @@ fMRI, sMRI, dMRI, PRS, CBCL, sociodemographic variable을 모두 포함했을 �
 <br/>
 #### **치료 및 예방을 위해 필요한 예산**
 지금까지 제시한 치료와 예방 방안을 실현하기 위해 필요한 예산은 다음과 같다.
+
+git commit --allow-empty -m "Trigger rebuild"
+git push
