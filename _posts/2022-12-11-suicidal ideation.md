@@ -2,7 +2,7 @@
 layout: post
 title: 아동 청소년 자살 예방 제안서
 date: 2022-12-09 17:39:00
-description: 아동 청소년 자살률 0% 달성을 위한 치료 및 예방을 위한 계획
+description: 아동 청소년 자살률 0% 달성을 위한 치료 및 예방 계획
 comment : true
 ---
 
