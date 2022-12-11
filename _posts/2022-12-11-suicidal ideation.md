@@ -80,7 +80,9 @@ test  <- data_final[-train.index,]
 ```
 전처리를 완료한 데이터(n = 1768)는 data split 과정을 통해 train set과 test set으로 나누었다. 이때, test 또는 train set에 특정 데이터가 쏠리는 것을 방지하기 위해, 자살 사고가 있는 사람과 없는 사람의 비율을 train set과 test set에 동일하게 배분하였다(p = .7). 이때 train & test set으로 나누는 것은, test set을 대상으로 머신 러닝을 수행하고 이때 도출된 모델을 기반으로 test set에 적용해보기 위함이다. 모델을 도출해낼 때 사용되지 않은 데이터에 대해 모델을 적용하고 예측해봄으로써 “일반화(generalization)”할 수 있게 된다. <br/>
 
-<img src="/assets/img/ML.png" width="90%" height="90%"/>
+<center>
+![ML](https://user-images.githubusercontent.com/114209766/206893862-f10a24c5-d165-49b1-b1a4-ab252516a9d4.jpg)
+<center/>
 
 #### **Feature Selection**
 ```
@@ -102,15 +104,14 @@ for (i in x){
 ```
 다음으로, 자살 사고를 유의미하게 예측할 수 있는 변인을 추려내기 위해 feature selection을 수행하였다. 유의미하게 나온 변인들을 종합하면 다음과 같다. <br/>
 
-<center>
-<img src="assets/img/significant.png" width="300"/>
-</center>
+![significant](https://user-images.githubusercontent.com/114209766/206894557-6bdf447d-415b-431f-b201-31b2cef6f8a7.png){: width="100%" height="100%"}
 
 #### **Auto ML**
 유의미한 변인들을 기반으로, train set에 대해 본격적인 머신 러닝을 수행하였다. 이때, 5-fold 기법을 활용하여 cross-validation이 이루어졌다. 머신 러닝에는 R의 `h2o package`가 활용되었다. <br/>
 fMRI, sMRI, dMRI, PRS, CBCL, sociodemographic variable을 모두 포함했을 때, leader model인 GBM에서 자살 사고를 예측하는 변수들의 상대적 중요도는 다음과 같다. <br/>
 
-<img src="/assets/img/shap.png" width="300"/>
+![shap](https://user-images.githubusercontent.com/114209766/206894619-d6e5bfb4-b2cc-4bf6-a83d-a7014542fe03.png)
+![last_significant](https://user-images.githubusercontent.com/114209766/206894663-fa10a534-a5eb-4af2-8f64-a100f3b17e9d.png)
 
 결과적으로 유의미한 변인을 정리하면 다음과 같다. White matter 주요 변인을 살펴보면, emotion과 관련된 뇌 영역(ex. amygdala, ACC...)이나 보상 체계와 관련된 뇌 영역(ex. insula...) 등의 연결성이 자살 사고를 유의미하게 예측함을 알 수 있다. 특히, amygdala의 높은 연결성이 자살 사고를 유의미하게 예측하는 것은, 자살 사고를 하는 아동 청소년들이 감정 변화에 더욱 민감하기 때문일 수 있음을 시사한다. <br/>
 주요 변인 상위 항목 중 가장 많은 비중을 차지하는 것은 CBCL이며, 이는 자기보고 데이터가 자살 사고를 예측하는 데 상당히 유의미하다는 것을 의미한다. 이에 따라, CBCL 변인을 단독으로 활용했을 때 자살 사고 예측력을 확인해보았다. 지금까지 수행한 것과 동일한 과정을 통해 CBCL 단독 예측력을 확인한 결과, AUC가 0.96으로 상당히 높음을 확인하였다. 이는, PRS(AUC = 0.59), sociodemographic(AUC = 0.64), fMRI(AUC = 0.55), sMRI(AUC = 0.55), dMRI(AUC = 0.73) 각각의 단독 예측에 비해 유의미하게 높은 수치이다. <br/>
@@ -134,7 +135,7 @@ fMRI, sMRI, dMRI, PRS, CBCL, sociodemographic variable을 모두 포함했을 �
 #### **치료 및 예방을 위해 필요한 예산**
 지금까지 제시한 치료와 예방 방안을 실현하기 위해 필요한 예산은 다음과 같다.
 ##### **치료 예산**
-<img src="/assets/img/treatment.png" width="300"/>
+![treatment](https://user-images.githubusercontent.com/114209766/206894680-59896570-be26-49c6-b9c2-a7680fbf194d.png)
 <br/>
 ##### **예방 예산**
-<img src="/assets/img/prevent.png" width="300"/>
+![prevent](https://user-images.githubusercontent.com/114209766/206894688-d00aec0c-886d-4c14-ab93-bd523bf7abe5.png)
