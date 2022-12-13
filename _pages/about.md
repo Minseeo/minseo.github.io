@@ -6,7 +6,7 @@ subtitle: mskwon2103@naver.com / min10seo@snu.ac.kr
 
 profile:
   align: right
-  image: <img alt="SNU_Image" src="{{https://user-images.githubusercontent.com/114209766/207246051-44b44e85-e2da-4483-a99e-7625e3b7df92.jpg}}">
+  image: SNU_Image.jpg
   address: >
     <p>Seoul National University</p>
     <p>Department of Psychology</p>
