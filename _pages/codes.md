@@ -89,7 +89,7 @@ abcd_demographics <- abcd_demographics %>%
 data_list <- list(abcd_SI, abcd_PRS, abcd_cbcl, abcd_brain_gm, abcd_brain_wm, abcd_brain_task, abcd_demographics)
 data_inner_join <- join_all(data_list, by = 'subjectkey', type = 'inner')
 ```
-#### 단독 변인 예측력 확인을 위한 Data Merge : 알아보고자 하는 변인만 list에 추가
+#### Single Data Prediction : Add Variable into "data_list"
 ```
 data_list <- list(abcd_SI, abcd_PRS)
 data_list <- list(abcd_SI, abcd_cbcl)
