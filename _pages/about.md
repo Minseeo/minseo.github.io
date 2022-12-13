@@ -9,10 +9,10 @@ selected_papers: false # includes a list of papers marked as "selected={true}"
 social: true  # includes social icons at the bottom of the page
 ---
 
-<img src="https://user-images.githubusercontent.com/114209766/207246051-44b44e85-e2da-4483-a99e-7625e3b7df92.jpg" width="60%" height="60%"/>
+<img src="https://user-images.githubusercontent.com/114209766/207246051-44b44e85-e2da-4483-a99e-7625e3b7df92.jpg" width="30%" height="30%"/>
 <br/>
 ## SNU Consulting Inc.
 
 데이터사이언스 기반 전략 컨설팅 전문 기업 <br/>
 <br/>
-수석 컨설턴트 권민서(2018-11153)
+수석 컨설턴트 **권민서(2018-11153)**
